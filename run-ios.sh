@@ -1,41 +1,30 @@
-#!/bin/zsh
-set -euo pipefail
+set -e
 
-UUID="${1:-}"   # optional: pass a simulator UUID, else use the currently booted one
+xcrun simctl shutdown all || true
+killall -9 Simulator || true
+rm -rf ios/DerivedData
 
-echo "▶️  Building web assets…"
-npm run -s build
-npx cap copy ios
+xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' clean
 
-echo "▶️  Ensuring Simulator is running…"
-open -a Simulator || true
+xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Debug -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16 Pro' -derivedDataPath ios/DerivedData CODE_SIGNING_ALLOWED=NO build
 
-if [[ -n "$UUID" ]]; then
-  # Boot the specific simulator if provided
-  xcrun simctl boot "$UUID" || true
-  DEST="id=$UUID"
-else
-  # Use the currently booted device
-  BOOTED=$(xcrun simctl list devices booted | sed -n 's/.*(\([A-F0-9-]\{36\}\)).*/\1/p' | head -n1)
-  if [[ -z "$BOOTED" ]]; then
-    echo "No booted simulator found. Booting the first available iPhone 16…"
-    CANDIDATE=$(xcrun simctl list devices | sed -n 's/.*iPhone 16[^)]*) (\([A-F0-9-]\{36\}\)).*/\1/p' | head -n1)
-    [[ -n "$CANDIDATE" ]] && xcrun simctl boot "$CANDIDATE" || true
-  fi
+APP="$(find ios/DerivedData/Build/Products/Debug-iphonesimulator -maxdepth 2 -name '*.app' -print -quit)"
+[ -n "$APP" ] || { echo "no .app found"; exit 1; }
+
+xattr -cr "$APP"
+[ -d "$APP/Frameworks" ] && xattr -cr "$APP/Frameworks"
+
+if [ -d "$APP/Frameworks" ]; then
+  find "$APP/Frameworks" -type d -name "*.framework" -exec /usr/bin/codesign --force --sign - --timestamp=none "{}" \;
 fi
+[ -f "$APP/App.debug.dylib" ] && /usr/bin/codesign --force --sign - --timestamp=none "$APP/App.debug.dylib" || true
+[ -f "$APP/__preview.dylib" ] && /usr/bin/codesign --force --sign - --timestamp=none "$APP/__preview.dylib" || true
+/usr/bin/codesign --force --sign - --timestamp=none "$APP"
 
-echo "▶️  Installing app…"
-xcrun simctl terminate booted com.yourname.strainspotter || true
-APP=$(find ~/Library/Developer/Xcode/DerivedData -type d -path '*/Build/Products/Debug-iphonesimulator/*.app' -maxdepth 8 | head -n1)
-if [[ -z "$APP" ]]; then
-  echo "❌ Could not locate the built .app in DerivedData."
-  exit 1
-fi
-xcrun simctl install booted "$APP"
+BUNDLE=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")
 
-BUNDLE_ID=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")
-echo "ℹ️  BUNDLE_ID = $BUNDLE_ID"
-
-echo "▶️  Launching…"
-xcrun simctl launch booted "$BUNDLE_ID" || true
-echo "✅  Done."
+open -a Simulator
+xcrun simctl boot "iPhone 16 Pro" 2>/dev/null || true
+xcrun simctl uninstall "iPhone 16 Pro" "$BUNDLE" 2>/dev/null || true
+xcrun simctl install "iPhone 16 Pro" "$APP"
+xcrun simctl launch --console-pty "iPhone 16 Pro" "$BUNDLE"
