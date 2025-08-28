@@ -1,0 +1,16 @@
+# Node / web
+node_modules/
+dist/
+.vite/
+*.log
+npm-debug.log*
+pnpm-lock.yaml
+yarn.lock
+
+# iOS (Capacitor/Xcode)
+ios/DerivedData/
+ios/App/App/build/
+*.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+
+# macOS
+.DS_Store
