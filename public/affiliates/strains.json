@@ -1,0 +1,3 @@
+{ "Blue Dream":{"type":"Hybrid","sativa":60,"indica":40,"thc":"18–24%","grow":"Warm; 9–10 wks","seeds":"https://example-seeds.com/blue-dream","flower":"https://example-dispensary.com/blue-dream"},
+  "OG Kush":{"type":"Hybrid","sativa":45,"indica":55,"thc":"20–26%","grow":"Dry/warm; 8–9 wks","seeds":"https://example-seeds.com/og-kush","flower":"https://example-dispensary.com/og-kush"},
+  "Sour Diesel":{"type":"Sativa","sativa":70,"indica":30,"thc":"18–23%","grow":"Sunny; 10–11 wks","seeds":"https://example-seeds.com/sour-diesel","flower":"https://example-dispensary.com/sour-diesel"} }

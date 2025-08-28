@@ -1,0 +1,169 @@
+:root{ --bg-deep:#0b3d21; }
+
+html,body{ height:100%; margin:0; }
+body{
+  background:
+    linear-gradient(160deg, rgba(11,61,33,.75), rgba(16,77,42,.75)),
+    url("bg.png") center/cover no-repeat !important;
+  color:#fff;
+  font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 16px) !important;
+}
+
+/* Glass cards */
+.card, .Card, [data-card], .results .result, ion-card, ion-content > *{
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,.25) !important;
+}
+
+/* Kill any opaque panels */
+.panel, .container, .section, .screen, .view, .pane{
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* Buttons */
+button, .btn, ion-button{
+  background: rgba(255,255,255,0.12) !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  color:#fff !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(6px);
+}
+
+/* Inputs */
+input, textarea, select, ion-input, ion-textarea{
+  background: rgba(255,255,255,0.10) !important;
+  color:#fff !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  border-radius: 12px !important;
+}
+
+/* Tabs */
+.tabbar, .tabs, [data-tabs], ion-segment, ion-tab-bar{
+  background: rgba(0,0,0,0.15) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Title spacing */
+h1, .title, ion-title{
+  margin-top: 8px !important;
+  text-shadow: 0 1px 0 rgba(0,0,0,.5);
+}
+
+/* Results rows */
+.results{ display:flex; flex-direction:column; gap:10px; }
+.result{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; }
+
+/* Show the background everywhere */
+#root, ion-app, ion-content{
+  background: transparent !important;
+}
+
+/* ===== Force transparent backgrounds for Ionic ===== */
+:root{
+  /* Global Ionic background to transparent */
+  --ion-background-color: transparent !important;
+  --ion-toolbar-background: rgba(0,0,0,0.15) !important;
+  --ion-tab-bar-background: rgba(0,0,0,0.15) !important;
+  --ion-card-background: rgba(255,255,255,0.08) !important;
+}
+
+/* ion-content must be overridden via CSS var */
+ion-content{
+  --background: transparent !important;
+  background: transparent !important;
+}
+
+/* Pages/containers Ionic uses */
+ion-app, ion-page, .ion-page, .content, .content-inner, .scroll-content{
+  background: transparent !important;
+}
+
+/* Common bars */
+ion-header, ion-toolbar, ion-tab-bar{
+  --background: rgba(0,0,0,0.15) !important;
+  background: transparent !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+}
+
+/* Any generic “panel” we created earlier */
+.panel, .container, .section, .screen, .view, .pane, .app-shell{
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* Age gate panel (in case it has its own fill) */
+.age, .age-gate, .age-verify, .age-panel{
+  background: rgba(0,0,0,0.18) !important; /* subtle glass */
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 16px !important;
+}
+
+/* Keep the nice glass for cards/results */
+ion-card, .card, .Card, [data-card], .results .result{
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,.25) !important;
+}
+
+/* Make sure the main body shows the photo */
+body{
+  background:
+    linear-gradient(160deg, rgba(11,61,33,.65), rgba(16,77,42,.65)),
+    url("bg.png") center/cover no-repeat !important;
+  color:#fff;
+  font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 16px) !important;
+}
+:root{
+  --ion-background-color: transparent !important;
+  --ion-toolbar-background: rgba(0,0,0,0.15) !important;
+  --ion-tab-bar-background: rgba(0,0,0,0.15) !important;
+  --ion-card-background: rgba(255,255,255,0.08) !important;
+}
+
+ion-content{
+  --background: transparent !important;
+  background: transparent !important;
+}
+ion-app, ion-page, .ion-page, .content, .content-inner, .scroll-content{
+  background: transparent !important;
+}
+ion-header, ion-toolbar, ion-tab-bar{
+  --background: rgba(0,0,0,0.15) !important;
+  background: transparent !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+}
+.age, .age-gate, .age-verify, .age-panel{
+  background: rgba(0,0,0,0.18) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 16px !important;
+}
+ion-card, .card, .Card, [data-card], .results .result{
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,.25) !important;
+}
+
+/* Make sure the main body shows the photo */
+body{
+  background:
+    linear-gradient(160deg, rgba(11,61,33,.65), rgba(16,77,42,.65)),
+    url("bg.png") center/cover no-repeat !important;
+  color:#fff;
+  font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 16px) !important;
+}

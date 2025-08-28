@@ -1,0 +1,6 @@
+{
+  "appId": "com.yourname.strainspotter",
+  "appName": "StrainSpotter",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

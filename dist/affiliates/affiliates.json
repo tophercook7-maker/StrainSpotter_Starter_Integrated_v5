@@ -1,0 +1,17 @@
+{
+  "White Widow": {
+    "type": "Hybrid",
+    "sativa": 60,
+    "indica": 40,
+    "thc": "20-25%",
+    "grow": "Indoors/Outdoors, Mediterranean climate, 8-9 weeks",
+    "seeds": [
+      {"name":"Seedsman - White Widow","url":"https://www.seedsman.com/search-results?q=White%20Widow"},
+      {"name":"Crop King - White Widow","url":"https://www.cropkingseeds.com/?s=White+Widow"}
+    ],
+    "flower": [
+      {"name":"Find on Leafly","url":"https://www.leafly.com/strains/white-widow"},
+      {"name":"Find on Weedmaps","url":"https://weedmaps.com/strains/white-widow"}
+    ]
+  }
+}

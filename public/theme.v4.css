@@ -1,0 +1,160 @@
+/* Full-screen cannabis field background (with a dark green glass overlay) */
+html, body {
+  height: 100%;
+}
+body{
+  margin:0;
+  background:
+     url("bg.png") center/cover no-repeat !important;
+  color:#fff;
+  font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 16px) !important;
+}
+
+/* Make app chrome transparent/glassy so the photo shows through */
+#root, ion-app, ion-content {
+  --background: transparent !important;
+  background: transparent !important;
+}
+
+.card, .Card, [data-card], .results .result, ion-card, ion-content > *{
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,.25) !important;
+}
+
+/* Kill any opaque panels */
+.panel, .container, .section, .screen, .view, .pane{
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* Buttons */
+button, .btn, ion-button{
+  background: rgba(255,255,255,0.12) !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  color:#fff !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(6px);
+}
+
+/* Inputs */
+input, textarea, select, ion-input, ion-textarea{
+  background: rgba(255,255,255,0.10) !important;
+  color:#fff !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  border-radius: 12px !important;
+}
+
+/* Tabs */
+.tabbar, .tabs, [data-tabs], ion-segment, ion-tab-bar{
+  background: rgba(0,0,0,0.15) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Titles spacing */
+h1, .title, ion-title{
+  margin-top: 8px !important;
+  text-shadow: 0 1px 0 rgba(0,0,0,.5);
+}
+
+/* Results */
+.results{ display:flex; flex-direction:column; gap:10px; }
+.result{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; }
+
+/* ---- Aggressive transparent overrides for Ionic + inline styles ---- */
+
+/* Ion Content sometimes paints inside shadow parts */
+ion-content { --background: transparent !important; background: transparent !important; }
+ion-content::part(background){ background: transparent !important; }
+ion-content::part(scroll){ background: transparent !important; }
+
+/* Ion Page + common wrappers */
+ion-page { --background: transparent !important; background: transparent !important; }
+ion-header, ion-toolbar, ion-footer {
+  --background: rgba(0,0,0,0.15) !important;  /* subtle glass if you have headers/toolbars */
+  background: rgba(0,0,0,0.15) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+}
+
+/* Catch typical app wrappers that might still be solid */
+.app, .app-shell, .screen, .view, .pane, .panel, .container, .section, .content, .page, .wrapper {
+  background: transparent !important;
+  --background: transparent !important;
+  border: 0 !important;
+}
+
+/* If any element has an inline background color, override it */
+*[style*="background"] { background: transparent !important; }
+
+/* Keep our global body background image enabled */
+html, body { height: 100%; }
+body{
+  margin:0;
+  background:
+    linear-gradient(160deg, rgba(11,61,33,.65), rgba(16,77,42,.65)),
+    url("bg.png") center/cover no-repeat !important;
+  color:#fff;
+  font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 16px) !important;
+}
+
+/* 🔥 Kill the solid drab green background everywhere */
+body, ion-app, ion-content, ion-page, .panel, .container, .section, .screen, .view, .pane {
+  background: transparent !important;
+  --background: transparent !important;
+}
+.strain-info{ margin-top:8px; font-size:12px; }
+.strain-info .glass{
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 10px;
+  padding: 8px;
+  backdrop-filter: blur(8px);
+}
+.strain-info .links{ display:flex; gap:10px; margin-top:6px; }
+.strain-info .links a{
+  text-decoration:none; padding:4px 8px; border-radius:8px;
+  border:1px solid rgba(255,255,255,0.25);
+  color:#fff;
+}
+
+/* --- strain info box on each result card --- */
+.strain-info{
+  margin-top:10px;
+  padding:10px 12px;
+  background: rgba(0,0,0,0.28);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  color:#fff;
+  font-size: 12px;
+  line-height:1.35;
+  backdrop-filter: blur(6px);
+}
+.strain-info p{ margin:4px 0; }
+.strain-info a{
+  color:#c9f7ff; text-decoration: none; font-weight:600;
+}
+.strain-info a:hover{ text-decoration: underline; }
+
+.strain-info{
+  margin-top:10px;
+  padding:10px 12px;
+  background: rgba(0,0,0,0.28);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  color:#fff;
+  font-size: 12px;
+  line-height:1.35;
+  backdrop-filter: blur(6px);
+}
+.strain-info p{ margin:4px 0; }
+.strain-info a{
+  color:#c9f7ff; text-decoration: none; font-weight:600;
+}
+.strain-info a:hover{ text-decoration: underline; }

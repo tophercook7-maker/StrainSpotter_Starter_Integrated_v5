@@ -1,0 +1,162 @@
+/* StrainSpotter – cannabis field + glass UI */
+
+:root{
+  --bg-deep:#0b3d21;
+  --bg-soft:#104d2a;
+  --glass: rgba(255,255,255,0.12);
+  --glass-strong: rgba(255,255,255,0.18);
+  --stroke: rgba(255,255,255,0.25);
+  --ring: rgba(34,197,94,0.30);
+  --ink: #f8fafc;
+  --muted: #cbd5e1;
+}
+
+/* full-screen background */
+html,body{ height:100%; margin:0 }
+body{
+  color: var(--ink);
+  font-family: -apple-system, system-ui, Segoe UI, Roboto, Helvetica, Arial;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.45) 60%, rgba(0,0,0,.55) 100%),
+    url("/bg.png") center/cover no-repeat,
+    linear-gradient(160deg, var(--bg-deep), var(--bg-soft));
+  padding-top: calc(env(safe-area-inset-top, 0px) + 18px);
+}
+
+/* make the root stretch */
+#root{ min-height:100%; }
+
+/* universal glass card look */
+.card, .Card, [data-card], .results .result, .gallery-grid > * {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.25);
+}
+
+/* headings sit a little lower */
+h1,h2,h3{ margin: 6px 0 10px; line-height:1.2; text-shadow:0 1px 0 rgba(0,0,0,.35) }
+h1{ font-size: 28px }
+
+/* tabs glass */
+.tabbar, .tabs, [data-tabs]{ display:flex; gap:8px; flex-wrap:wrap; }
+.tabbar button, .tabs button, [data-tabs] button{
+  appearance:none;
+  color: var(--ink);
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--stroke);
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .05s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+  box-shadow: 0 6px 20px rgba(0,0,0,.25);
+}
+.tabbar button:hover,
+.tabs button:hover,
+[data-tabs] button:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(0,0,0,.35);
+  border-color: var(--ring);
+}
+.tabbar .active, .tabs .active, [data-tabs] .active{
+  background: var(--glass-strong);
+  box-shadow: 0 0 0 3px var(--ring), 0 14px 36px rgba(0,0,0,.35);
+}
+
+/* inputs and buttons = glass */
+button,
+input[type="text"], input[type="search"], input[type="file"], textarea, select {
+  color: var(--ink);
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--stroke);
+  border-radius: 12px;
+  padding: 10px 12px;
+  outline: none;
+  box-shadow: 0 6px 20px rgba(0,0,0,.25);
+}
+button.primary{
+  background: linear-gradient(180deg, rgba(34,197,94,.35), rgba(16,185,129,.35));
+  border-color: rgba(16,185,129,.45);
+}
+button:hover{ transform: translateY(-1px); }
+button:active{ transform: translateY(0); }
+
+/* “Top Matches” list glass */
+.results{ display:flex; flex-direction:column; gap:10px; }
+.results .result{ padding:10px 12px; display:flex; align-items:center; justify-content:space-between; }
+.results .result .score{ font-variant-numeric: tabular-nums; font-weight:700; color:#b9fbc0; }
+
+/* gallery thumbs if present */
+.gallery-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.gallery-grid img{
+  width:100%; aspect-ratio:1/1; object-fit:cover;
+  border-radius:14px; border:1px solid var(--stroke);
+  box-shadow: 0 8px 24px rgba(0,0,0,.28);
+}
+
+/* nudge everything down a touch more if your title still feels high */
+.app-shell { padding-top: 8px; }
+/* ===== Age Gate: kill solid backgrounds & make glass ===== */
+
+/* Catch common container names */
+.age-gate,
+.ageGate,
+[data-age-gate],
+.gate,
+.gate-card,
+.screen-age,
+.modal,
+.sheet,
+.panel,
+.card.age,
+.card.gate {
+  background: rgba(255,255,255,.14) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(255,255,255,.25) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,.35) !important;
+}
+
+/* If the page wrapper itself was painted solid */
+body, #root, #root > * {
+  background: transparent !important;
+}
+
+/* If you happen to use Ionic anywhere */
+ion-content { --background: transparent !important; }
+
+/* Buttons & inputs on the gate still readable */
+.age-gate button,
+.gate button,
+.age-gate input,
+.gate input,
+.age-gate .btn,
+.gate .btn {
+  color: #f8fafc !important;
+  background: rgba(255,255,255,.14) !important;
+  border: 1px solid rgba(255,255,255,.25) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+/* Results/rectangles that still look opaque on first screen */
+.results .result,
+.panel, .sheet, .modal, .card {
+  background: rgba(255,255,255,.12) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255,255,255,.22) !important;
+}
+
+/* Last-resort nudge: any element that uses a CSS var or class color green */
+[class*="bg-"], [class*="background"], [style*="background-color:#0b3d21"], [style*="background:#0b3d21"] {
+  background: transparent !important;
+}

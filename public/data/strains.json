@@ -1,0 +1,23 @@
+[
+  {
+    "id": "blue-dream",
+    "displayName": "Blue Dream",
+    "aka": ["BlueDream","Blue-Dream"],
+    "thcPercent": "18–24%",
+    "bestClimate": "Warm Mediterranean, low humidity",
+    "seedSources": [
+      {"name":"Seedsman","url":"https://example.com/seedsman/blue-dream"},
+      {"name":"ILGM","url":"https://example.com/ilgm/blue-dream"}
+    ]
+  },
+  {
+    "id": "northern-lights",
+    "displayName": "Northern Lights",
+    "aka": ["NL","NorthernLights"],
+    "thcPercent": "16–21%",
+    "bestClimate": "Temperate/cool; great indoors",
+    "seedSources": [
+      {"name":"Royal Queen","url":"https://example.com/rqs/northern-lights"}
+    ]
+  }
+]

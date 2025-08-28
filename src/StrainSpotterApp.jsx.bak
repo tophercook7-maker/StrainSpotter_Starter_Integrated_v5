@@ -1,0 +1,375 @@
+import React, { useEffect, useRef, useState } from "react";
+import { imageToEmbedding, cosine } from "./ai";
+
+const LS_KEY = "strainspotter_items_v1";
+
+/* ---------- Small helpers (local) ---------- */
+async function fileToImage(file) {
+  const url = URL.createObjectURL(file);
+  const img = await new Promise((res, rej) => {
+    const el = new Image();
+    el.onload = () => res(el);
+    el.onerror = rej;
+    el.src = url;
+  });
+  return { img, url };
+}
+
+function toDownscaledCanvas(img, maxSide = 1024) {
+  const w0 = img.naturalWidth || img.width || 1;
+  const h0 = img.naturalHeight || img.height || 1;
+  const scale = Math.min(1, maxSide / Math.max(w0, h0));
+  const w = Math.max(1, Math.round(w0 * scale));
+  const h = Math.max(1, Math.round(h0 * scale));
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, w, h);
+  return canvas;
+}
+
+function canvasToPreviewURL(canvas, quality = 0.85) {
+  try {
+    return canvas.toDataURL("image/jpeg", quality);
+  } catch {
+    return canvas.toDataURL();
+  }
+}
+
+/* ---------- Simple Card shell ---------- */
+function Card({ title, subtitle, children }) {
+  return (
+    <div style={{
+      background: "#fff",
+      border: "1px solid #E2E8F0",
+      borderRadius: 16,
+      padding: 16,
+      boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
+    }}>
+      {(title || subtitle) && (
+        <div style={{ marginBottom: 10 }}>
+          {title && <div style={{ fontSize: 18, fontWeight: 700 }}>{title}</div>}
+          {subtitle && <div style={{ fontSize: 13, color: "#64748B" }}>{subtitle}</div>}
+        </div>
+      )}
+      {children}
+    </div>
+  );
+}
+
+/* ---------- Main App ---------- */
+export default function StrainSpotterApp() {
+  const [ageOk, setAgeOk] = useState(false);
+  const [tab, setTab] = useState("classify"); // "classify" | "gallery" | "export"
+
+  // Gallery items: { id, name, img (dataURL), emb (number[]) }
+  const [items, setItems] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); }
+    catch { return []; }
+  });
+  useEffect(() => { localStorage.setItem(LS_KEY, JSON.stringify(items)); }, [items]);
+
+  // UI state
+  const [busy, setBusy] = useState(false);
+  const [results, setResults] = useState([]); // [{ name, score }]
+  const [log, setLog] = useState([]);
+
+  // Inline rename
+  const [editingId, setEditingId] = useState(null);
+  const [editingName, setEditingName] = useState("");
+
+  const galleryInputRef = useRef(null);
+  const classifyInputRef = useRef(null);
+
+  /* ---------- Actions ---------- */
+
+  async function onAddToGallery(e) {
+    if (busy) { alert("Please wait…"); return; }
+    try {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      setBusy(true);
+
+      const proposed = f.name?.replace(/\.[^/.]+$/, "") || "Untitled";
+      const name = (prompt("Name this photo:", proposed) || proposed).trim();
+
+      const { img, url } = await fileToImage(f);
+      const canvas = toDownscaledCanvas(img, 1024);
+      const emb = await imageToEmbedding(canvas);
+      const preview = canvasToPreviewURL(canvas, 0.85);
+
+      const id = "item_" + Date.now();
+      setItems(prev => [...prev, { id, name, img: preview, emb }]);
+
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      alert("Add failed: " + (err?.message || err));
+    } finally {
+      setBusy(false);
+      if (e?.target) e.target.value = "";
+    }
+  }
+
+  async function onClassify(e) {
+    if (busy) { alert("Please wait…"); return; }
+    try {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      if (items.length === 0) {
+        alert("Add at least one gallery image first.");
+        return;
+      }
+      setBusy(true);
+      setResults([]);
+      setLog([]);
+
+      const { img, url } = await fileToImage(f);
+      const canvas = toDownscaledCanvas(img, 1024);
+      const emb = await imageToEmbedding(canvas);
+
+      const scored = items
+        .map(it => ({ name: it.name, score: cosine(emb, it.emb || []) }))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 5);
+
+      setResults(scored);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      alert("Classify failed: " + (err?.message || err));
+    } finally {
+      setBusy(false);
+      if (e?.target) e.target.value = "";
+    }
+  }
+
+  function startRename(id, current) {
+    setEditingId(id);
+    setEditingName(current || "");
+  }
+
+  function commitRename(id) {
+    const name = editingName.trim();
+    if (!name) { setEditingId(null); return; }
+    setItems(list => list.map(x => x.id === id ? { ...x, name } : x));
+    setEditingId(null);
+  }
+
+  function removeItem(id) {
+    if (!confirm("Remove this photo from your gallery?")) return;
+    setItems(list => list.filter(x => x.id !== id));
+  }
+
+  function onExport() {
+    try {
+      const blob = new Blob([JSON.stringify(items, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = "strainspotter-gallery.json";
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      alert("Export failed: " + (e?.message || e));
+    }
+  }
+
+  function onImport(ev) {
+    const file = ev.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(String(reader.result || "[]"));
+        if (!Array.isArray(parsed)) throw new Error("Bad JSON format");
+        setItems(parsed);
+        alert("Imported " + parsed.length + " items.");
+      } catch (e) {
+        alert("Import failed: " + (e?.message || e));
+      } finally {
+        ev.target.value = "";
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  /* ---------- UI ---------- */
+
+  if (!ageOk) {
+    return (
+      <div style={{
+        minHeight: "100vh",
+        display: "grid",
+        placeItems: "center",
+        background: "linear-gradient(#ECFDF5,#fff)",
+        color: "#0f172a",
+        padding: 24
+      }}>
+        <Card title="Age Confirmation" subtitle="You must be 21+">
+          <button
+            onClick={() => setAgeOk(true)}
+            style={{ padding: "10px 14px", border: "1px solid #E2E8F0", borderRadius: 12, background: "#fff" }}
+          >
+            I am 21 or older
+          </button>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: "linear-gradient(#ECFDF5,#fff)",
+      color: "#0f172a",
+      padding: 24,
+      paddingTop: 56
+    }}>
+      <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gap: 16 }}>
+        {/* App header */}
+        <Card>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+            <div style={{ fontSize: 22, fontWeight: 800 }}>StrainSpotter</div>
+            {busy && <div style={{ fontSize: 12, color: "#64748B" }}>Working…</div>}
+          </div>
+
+          {/* Tabs */}
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12, marginBottom: 4 }}>
+            {[
+              { key: "classify", label: "Classify Photo" },
+              { key: "gallery", label: "My Gallery" },
+              { key: "export",  label: "Import / Export" },
+            ].map(t => (
+              <button
+                key={t.key}
+                onClick={() => setTab(t.key)}
+                style={{
+                  padding: "8px 12px",
+                  border: "1px solid #E2E8F0",
+                  borderRadius: 12,
+                  background: tab === t.key ? "#DCFCE7" : "#fff",
+                  fontWeight: tab === t.key ? 700 : 500
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </Card>
+
+        {/* CLASSIFY */}
+        {tab === "classify" && (
+          <Card title="Classify Photo" subtitle="Pick a photo to compare against your gallery">
+            <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+              <label style={{ padding: "8px 12px", border: "1px solid #E2E8F0", borderRadius: 12, background: "#fff", cursor: "pointer" }}>
+                Choose Photo
+                <input ref={classifyInputRef} type="file" accept="image/*" onChange={onClassify} style={{ display: "none" }} />
+              </label>
+              <span style={{ fontSize: 12, color: "#64748B" }}>
+                {items.length === 0 ? "Add at least one gallery image first." : "Will show top matches below."}
+              </span>
+            </div>
+
+            {busy && <div style={{ fontSize: 12, color: "#64748B", marginTop: 10 }}>Processing…</div>}
+
+            {results.length > 0 && (
+              <div style={{ marginTop: 12 }}>
+                <div style={{ fontWeight: 700, marginBottom: 6 }}>Top matches</div>
+                <ol style={{ paddingLeft: 18, margin: 0 }}>
+                  {results.map((r, i) => (
+                    <li key={i} style={{ margin: "4px 0" }}>
+                      {r.name} <span style={{ color: "#64748B" }}>({r.score.toFixed(3)})</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+
+            {log.length > 0 && (
+              <pre style={{ marginTop: 12, whiteSpace: "pre-wrap", fontSize: 12, color: "#334155" }}>
+                {log.join("\n")}
+              </pre>
+            )}
+          </Card>
+        )}
+
+        {/* GALLERY */}
+        {tab === "gallery" && (
+          <Card title="My Gallery" subtitle={`${items.length} photo${items.length === 1 ? "" : "s"}`}>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+              <label style={{ padding: "8px 12px", border: "1px solid #E2E8F0", borderRadius: 12, background: "#fff", cursor: "pointer" }}>
+                Add Photo (name now)
+                <input ref={galleryInputRef} type="file" accept="image/*" onChange={onAddToGallery} style={{ display: "none" }} />
+              </label>
+            </div>
+
+            {items.length === 0 && (
+              <div style={{ fontSize: 13, color: "#64748B" }}>No items yet. Add a photo to begin.</div>
+            )}
+
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
+              gap: 12
+            }}>
+              {items.map(it => (
+                <div key={it.id} style={{ border: "1px solid #E2E8F0", borderRadius: 12, overflow: "hidden", background: "#fff" }}>
+                  <div style={{ width: "100%", paddingTop: "100%", position: "relative", background: "#F1F5F9" }}>
+                    <img
+                      src={it.img}
+                      alt={it.name}
+                      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                  </div>
+                  <div style={{ padding: 8, display: "grid", gap: 6 }}>
+                    {editingId === it.id ? (
+                      <div style={{ display: "flex", gap: 6 }}>
+                        <input
+                          value={editingName}
+                          onChange={e => setEditingName(e.target.value)}
+                          onKeyDown={e => { if (e.key === "Enter") commitRename(it.id); if (e.key === "Escape") setEditingId(null); }}
+                          style={{ flex: 1, border: "1px solid #E2E8F0", borderRadius: 10, padding: "6px 8px" }}
+                        />
+                        <button onClick={() => commitRename(it.id)} style={{ border: "1px solid #E2E8F0", borderRadius: 10, padding: "6px 8px", background: "#DCFCE7" }}>
+                          Save
+                        </button>
+                      </div>
+                    ) : (
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                        <div style={{ fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.name}</div>
+                        <div style={{ display: "flex", gap: 6 }}>
+                          <button onClick={() => { setEditingId(it.id); setEditingName(it.name || ""); }} title="Rename"
+                            style={{ border: "1px solid #E2E8F0", borderRadius: 10, padding: "4px 8px", background: "#fff" }}>
+                            Rename
+                          </button>
+                          <button onClick={() => removeItem(it.id)} title="Remove"
+                            style={{ border: "1px solid #FCA5A5", color: "#B91C1C", borderRadius: 10, padding: "4px 8px", background: "#fff" }}>
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
+
+        {/* IMPORT / EXPORT */}
+        {tab === "export" && (
+          <Card title="Import / Export" subtitle="Backup or share your gallery JSON.">
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <button onClick={onExport} style={{ padding: "8px 12px", border: "1px solid #E2E8F0", borderRadius: 12, background: "#fff" }}>
+                Export JSON
+              </button>
+              <label style={{ padding: "8px 12px", border: "1px solid #E2E8F0", borderRadius: 12, background: "#fff", cursor: "pointer" }}>
+                Import JSON
+                <input type="file" accept="application/json" onChange={onImport} style={{ display: "none" }} />
+              </label>
+            </div>
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+}
