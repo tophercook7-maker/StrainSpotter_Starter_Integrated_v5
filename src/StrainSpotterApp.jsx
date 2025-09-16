@@ -48,13 +48,14 @@ function canvasToPreviewURL(canvas, quality = 0.9) {
   catch { return canvas.toDataURL(); }
 }
 
-/* ---------- UI bits ---------- */
+/* ---------- UI Components ---------- */
 function TabButton({ active, onClick, children }) {
+  // Enhanced tab button with better mobile sizing
   return (
     <button
       onClick={onClick}
       style={{
-        padding: "10px 14px",
+        padding: "12px 16px", // Increased padding
         borderRadius: 999,
         border: `1px solid ${active ? theme.primary : theme.tabIdleBorder}`,
         background: active ? theme.primary : theme.tabIdle,
@@ -64,9 +65,36 @@ function TabButton({ active, onClick, children }) {
         cursor: "pointer",
         boxShadow: active ? theme.halo : "none",
         transition: "all .18s ease",
+        fontSize: "16px", // Increased font size
+        minWidth: "100px", // Ensure minimum width
+        margin: "4px", // Add margin between tabs
       }}
     >
       {children}
+    </button>
+  );
+}
+
+function BackButton({ onClick }) {
+  // New back button component for navigation
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        padding: "10px 14px",
+        borderRadius: 12,
+        border: `1px solid ${theme.line}`,
+        background: theme.chip,
+        color: theme.text,
+        fontWeight: 700,
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
+        marginBottom: 12,
+        cursor: "pointer"
+      }}
+    >
+      ← Back
     </button>
   );
 }
@@ -106,6 +134,18 @@ function LeafBadge() {
 
 /* ---------- Main App ---------- */
 export default function StrainSpotterApp() {
+  // Detect mobile device for responsive design
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const [ageOk, setAgeOk] = useState(false);
   const [tab, setTab] = useState("classify");
 
@@ -119,11 +159,14 @@ export default function StrainSpotterApp() {
   const [queryPreview, setQueryPreview] = useState(null);
   const [identifiedStrain, setIdentifiedStrain] = useState(null);
   const [allStrains, setAllStrains] = useState([]);
+  const [filteredStrains, setFilteredStrains] = useState([]);
   const [selectedStrain, setSelectedStrain] = useState(null);
 
   // Load all strains on component mount
   useEffect(() => {
-    setAllStrains(getAllStrains());
+    const strains = getAllStrains();
+    setAllStrains(strains);
+    setFilteredStrains(strains);
   }, []);
 
   async function onAddToGallery(e) {
@@ -246,8 +289,8 @@ export default function StrainSpotterApp() {
   const galleryCount = items.length;
 
   return (
-    <div style={{ minHeight:"100vh", background: theme.bg, color: theme.text, padding: 16 }}>
-      {/* Header */}
+    <div style={{ minHeight:"100vh", background: theme.bg, color: theme.text, padding: isMobile ? "8px" : "16px" }}>
+      {/* Header - Simplified for mobile */}
       <div style={{ maxWidth: 980, margin: "12px auto 16px auto", display:"flex", alignItems:"center", gap:10 }}>
         <div style={{
           width:38, height:38, borderRadius:999,
@@ -260,8 +303,16 @@ export default function StrainSpotterApp() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div style={{ maxWidth: 980, margin: "0 auto", display:"flex", gap: 10, alignItems:"center", flexWrap:"wrap" }}>
+      {/* Tabs - Enhanced for mobile */}
+      <div style={{ 
+        maxWidth: 980, 
+        margin: "0 auto", 
+        display: "flex", 
+        gap: isMobile ? 6 : 10, 
+        alignItems: "center", 
+        flexWrap: "wrap",
+        justifyContent: isMobile ? "center" : "flex-start" // Center tabs on mobile
+      }}>
         <TabButton active={tab === "classify"} onClick={() => setTab("classify")}>Classify Photo</TabButton>
         <TabButton active={tab === "gallery"} onClick={() => setTab("gallery")}>My Gallery ({galleryCount})</TabButton>
         <TabButton active={tab === "strains"} onClick={() => setTab("strains")}>Strain Database</TabButton>
@@ -270,7 +321,13 @@ export default function StrainSpotterApp() {
         {busy && <div style={{ fontSize: 12, color: theme.subtext }}>Processing…</div>}
       </div>
 
-      <div style={{ maxWidth: 980, margin: "14px auto 40px auto", display:"grid", gap: 16 }}>
+      <div style={{ 
+        maxWidth: 980, 
+        margin: "14px auto 40px auto", 
+        display: "grid", 
+        gap: 16,
+        padding: isMobile ? "0 8px" : "0" // Add padding on mobile
+      }}>
         {/* CLASSIFY */}
         {tab === "classify" && (
           <Card title="Classify Photo" subtitle="Pick a photo to find the closest matches in your gallery.">
@@ -319,12 +376,13 @@ export default function StrainSpotterApp() {
                   ))}
                 </div>
                 
-                {/* Add strain details section */}
+                {/* Add strain details section with back button */}
                 {identifiedStrain && identifiedStrain.strain && (
                   <>
                     <div style={{ fontWeight: 900, marginTop: 20, marginBottom: 6, color: theme.subtext }}>
                       Identified Strain {identifiedStrain.confidence > 0.7 ? "✓" : "?"}
                     </div>
+                    <BackButton onClick={() => setIdentifiedStrain(null)} />
                     <StrainDetail strain={identifiedStrain.strain} theme={theme} />
                   </>
                 )}
@@ -381,9 +439,36 @@ export default function StrainSpotterApp() {
         {tab === "strains" && (
           <Card title="Strain Database" subtitle="Browse our database of cannabis strains.">
             <div style={{ marginBottom: 16 }}>
+              <div style={{ fontWeight: 700, marginBottom: 8, color: theme.subtext }}>Search strains:</div>
+              <input
+                type="text"
+                placeholder="Enter strain name..."
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  background: theme.chip,
+                  color: theme.text,
+                  border: `1px solid ${theme.line}`,
+                  borderRadius: 8,
+                  marginBottom: 16
+                }}
+                onChange={(e) => {
+                  const searchTerm = e.target.value.toLowerCase();
+                  if (searchTerm === "") {
+                    setFilteredStrains(allStrains);
+                  } else {
+                    const filtered = allStrains.filter(strain => 
+                      strain.displayName.toLowerCase().includes(searchTerm) ||
+                      strain.name?.toLowerCase().includes(searchTerm) ||
+                      (strain.description && strain.description.toLowerCase().includes(searchTerm))
+                    );
+                    setFilteredStrains(filtered);
+                  }
+                }}
+              />
               <div style={{ fontWeight: 700, marginBottom: 8, color: theme.subtext }}>Select a strain to view details:</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {allStrains.map(strain => (
+                {filteredStrains.map(strain => (
                   <button
                     key={strain.id}
                     onClick={() => setSelectedStrain(strain)}
@@ -406,6 +491,7 @@ export default function StrainSpotterApp() {
             
             {selectedStrain && (
               <>
+                <BackButton onClick={() => setSelectedStrain(null)} />
                 <StrainDetail strain={selectedStrain} theme={theme} />
                 <div style={{ marginTop: 16 }}>
                   <button
@@ -432,7 +518,10 @@ export default function StrainSpotterApp() {
         {tab === "growing" && (
           <Card title="Growing Guides" subtitle="Learn how to grow different strains successfully.">
             {selectedStrain ? (
-              <GrowingGuide strain={selectedStrain} theme={theme} />
+              <>
+                <BackButton onClick={() => setSelectedStrain(null)} />
+                <GrowingGuide strain={selectedStrain} theme={theme} />
+              </>
             ) : (
               <div>
                 <div style={{ color: theme.text, marginBottom: 16 }}>
@@ -516,10 +605,11 @@ export default function StrainSpotterApp() {
                     if (!f) return;
                     try {
                       const text = await f.text();
-                      const arr = JSON.parse(text);
-                      if (!Array.isArray(arr)) throw new Error("Bad file format");
-                      setItems(arr);
-                      alert("Imported " + arr.length + " item(s).");
+                      const data = JSON.parse(text);
+                      if (!Array.isArray(data)) throw new Error("Invalid data format");
+                      if (!confirm(`Import ${data.length} items? This will replace your current gallery.`)) return;
+                      setItems(data);
+                      alert(`Imported ${data.length} items.`);
                     } catch (err) {
                       alert("Import failed: " + (err?.message || err));
                     } finally {
