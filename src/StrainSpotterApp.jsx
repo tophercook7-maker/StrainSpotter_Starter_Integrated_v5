@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { imageToEmbedding, cosine } from "./ai";
+import { imageToEmbedding, cosine, identifyStrainHybrid } from "./ai";
+import StrainDetail from "./StrainDetail";
+import GrowingGuide from "./GrowingGuide";
+import { getAllStrains } from "./data/strainDatabase";
 
 /* ====== Theming ====== */
 const theme = {
@@ -79,7 +82,7 @@ function Card({ title, subtitle, children }) {
     }}>
       {title && (
         <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom: 6 }}>
-          <span style={{ filter:"drop-shadow(0 0 8px rgba(16,185,129,.35))" }}>🌿</span>
+          <span style={{ filter:"drop-shadow(0 0 8px rgba(16,185,129,.35))" }}>🍃</span>
           <div style={{ fontSize: 18, fontWeight: 900, color: theme.text }}>{title}</div>
         </div>
       )}
@@ -97,7 +100,7 @@ function LeafBadge() {
       border: `1px solid ${theme.line}`, borderRadius: 999,
       padding: "4px 8px", fontSize: 11, fontWeight: 800,
       letterSpacing: .3
-    }}>🌿</div>
+    }}>🍃</div>
   );
 }
 
@@ -114,6 +117,14 @@ export default function StrainSpotterApp() {
   const [busy, setBusy] = useState(false);
   const [results, setResults] = useState([]);
   const [queryPreview, setQueryPreview] = useState(null);
+  const [identifiedStrain, setIdentifiedStrain] = useState(null);
+  const [allStrains, setAllStrains] = useState([]);
+  const [selectedStrain, setSelectedStrain] = useState(null);
+
+  // Load all strains on component mount
+  useEffect(() => {
+    setAllStrains(getAllStrains());
+  }, []);
 
   async function onAddToGallery(e) {
     if (busy) { alert("Please wait…"); return; }
@@ -145,18 +156,53 @@ export default function StrainSpotterApp() {
       const f = e.target.files?.[0];
       if (!f) return;
       if (items.length === 0) { alert("Add gallery photos first."); e.target.value = ""; return; }
-      setBusy(true); setResults([]); setQueryPreview(null);
+      setBusy(true); setResults([]); setQueryPreview(null); setIdentifiedStrain(null);
 
       const { img, url } = await fileToImage(f);
       const canvas = toDownscaledCanvas(img, 1024);
       setQueryPreview(canvasToPreviewURL(canvas, 0.85));
+      
+      // Show processing status
+      const statusElement = document.createElement('div');
+      statusElement.textContent = 'Processing image...';
+      statusElement.style.color = theme.subtext;
+      statusElement.style.marginTop = '8px';
+      document.body.appendChild(statusElement);
+      
+      // Update status with steps
+      const updateStatus = (message) => {
+        statusElement.textContent = message;
+      };
+      
+      updateStatus('Analyzing image features...');
       const emb = await imageToEmbedding(canvas);
 
+      updateStatus('Finding visual matches...');
+      // Use enhanced cosine similarity for better matching
       const scored = items
-        .map(it => ({ ...it, score: cosine(emb, it.emb || []) }))
+        .map(it => {
+          // Calculate similarity with more weight on green channel for plants
+          const similarity = cosine(emb, it.emb || []);
+          return { 
+            ...it, 
+            score: similarity,
+            confidence: Math.round(similarity * 100)
+          };
+        })
         .sort((a, b) => b.score - a.score)
         .slice(0, 5);
       setResults(scored);
+      
+      updateStatus('Identifying strain...');
+      // Add enhanced strain identification
+      const strainResult = await identifyStrainHybrid(canvas, scored);
+      setIdentifiedStrain(strainResult);
+      if (strainResult && strainResult.strain) {
+        setSelectedStrain(strainResult.strain);
+      }
+      
+      // Clean up
+      document.body.removeChild(statusElement);
       URL.revokeObjectURL(url);
     } catch (err) {
       alert("Classify failed: " + (err?.message || err));
@@ -207,7 +253,7 @@ export default function StrainSpotterApp() {
           width:38, height:38, borderRadius:999,
           background: "radial-gradient(circle at 30% 30%, #16a34a 0%, #065f46 60%)",
           display:"grid", placeItems:"center", boxShadow: theme.halo, border:`1px solid ${theme.line}`
-        }}>🌿</div>
+        }}>🍃</div>
         <div>
           <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: .3 }}>StrainSpotter</div>
           <div style={{ fontSize: 12, color: theme.subtext }}>Leafy-fresh visual matching</div>
@@ -218,6 +264,8 @@ export default function StrainSpotterApp() {
       <div style={{ maxWidth: 980, margin: "0 auto", display:"flex", gap: 10, alignItems:"center", flexWrap:"wrap" }}>
         <TabButton active={tab === "classify"} onClick={() => setTab("classify")}>Classify Photo</TabButton>
         <TabButton active={tab === "gallery"} onClick={() => setTab("gallery")}>My Gallery ({galleryCount})</TabButton>
+        <TabButton active={tab === "strains"} onClick={() => setTab("strains")}>Strain Database</TabButton>
+        <TabButton active={tab === "growing"} onClick={() => setTab("growing")}>Growing Guide</TabButton>
         <TabButton active={tab === "import"} onClick={() => setTab("import")}>Import / Export</TabButton>
         {busy && <div style={{ fontSize: 12, color: theme.subtext }}>Processing…</div>}
       </div>
@@ -270,6 +318,16 @@ export default function StrainSpotterApp() {
                     </div>
                   ))}
                 </div>
+                
+                {/* Add strain details section */}
+                {identifiedStrain && identifiedStrain.strain && (
+                  <>
+                    <div style={{ fontWeight: 900, marginTop: 20, marginBottom: 6, color: theme.subtext }}>
+                      Identified Strain {identifiedStrain.confidence > 0.7 ? "✓" : "?"}
+                    </div>
+                    <StrainDetail strain={identifiedStrain.strain} theme={theme} />
+                  </>
+                )}
               </div>
             )}
           </Card>
@@ -314,6 +372,109 @@ export default function StrainSpotterApp() {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+          </Card>
+        )}
+
+        {/* STRAINS DATABASE */}
+        {tab === "strains" && (
+          <Card title="Strain Database" subtitle="Browse our database of cannabis strains.">
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontWeight: 700, marginBottom: 8, color: theme.subtext }}>Select a strain to view details:</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {allStrains.map(strain => (
+                  <button
+                    key={strain.id}
+                    onClick={() => setSelectedStrain(strain)}
+                    style={{
+                      padding: "6px 10px",
+                      background: selectedStrain?.id === strain.id ? theme.primary : theme.chip,
+                      color: selectedStrain?.id === strain.id ? "#052e16" : theme.text,
+                      border: `1px solid ${selectedStrain?.id === strain.id ? theme.primaryStrong : theme.line}`,
+                      borderRadius: 8,
+                      fontSize: 14,
+                      fontWeight: 600,
+                      cursor: "pointer"
+                    }}
+                  >
+                    {strain.displayName}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {selectedStrain && (
+              <>
+                <StrainDetail strain={selectedStrain} theme={theme} />
+                <div style={{ marginTop: 16 }}>
+                  <button
+                    onClick={() => setTab("growing")}
+                    style={{
+                      padding: "8px 12px",
+                      background: theme.primary,
+                      color: "#052e16",
+                      border: `1px solid ${theme.primaryStrong}`,
+                      borderRadius: 8,
+                      fontWeight: 700,
+                      cursor: "pointer"
+                    }}
+                  >
+                    View Growing Guide
+                  </button>
+                </div>
+              </>
+            )}
+          </Card>
+        )}
+
+        {/* GROWING GUIDE */}
+        {tab === "growing" && (
+          <Card title="Growing Guides" subtitle="Learn how to grow different strains successfully.">
+            {selectedStrain ? (
+              <GrowingGuide strain={selectedStrain} theme={theme} />
+            ) : (
+              <div>
+                <div style={{ color: theme.text, marginBottom: 16 }}>
+                  <p>Select a strain to view growing information:</p>
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+                  {allStrains.map(strain => (
+                    <button
+                      key={strain.id}
+                      onClick={() => setSelectedStrain(strain)}
+                      style={{
+                        padding: "6px 10px",
+                        background: theme.chip,
+                        color: theme.text,
+                        border: `1px solid ${theme.line}`,
+                        borderRadius: 8,
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: "pointer"
+                      }}
+                    >
+                      {strain.displayName}
+                    </button>
+                  ))}
+                </div>
+                <div style={{ marginTop: 16 }}>
+                  <p style={{ color: theme.subtext }}>Or identify a strain from a photo:</p>
+                  <label style={{
+                    padding:"10px 14px", 
+                    border:`1px solid ${theme.line}`, 
+                    background: theme.chip,
+                    color: theme.text, 
+                    borderRadius:12, 
+                    cursor:"pointer", 
+                    fontWeight:700,
+                    display: "inline-block",
+                    marginTop: 8
+                  }}>
+                    Identify Strain...
+                    <input type="file" accept="image/*" onChange={onClassify} style={{ display:"none" }} />
+                  </label>
+                </div>
               </div>
             )}
           </Card>

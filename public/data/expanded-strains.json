@@ -1,0 +1,189 @@
+[
+  {
+    "id": "blue-dream",
+    "displayName": "Blue Dream",
+    "aka": ["BlueDream", "Blue-Dream", "Azure Dream"],
+    "type": "Hybrid",
+    "sativa": 60,
+    "indica": 40,
+    "thcPercent": "18–24%",
+    "cbdPercent": "0.1–0.2%",
+    "effects": ["Relaxed", "Creative", "Euphoric", "Happy", "Uplifted"],
+    "medicalUses": ["Stress", "Depression", "Pain", "Headaches"],
+    "flavors": ["Berry", "Blueberry", "Sweet", "Herbal"],
+    "bestClimate": "Warm Mediterranean, low humidity",
+    "difficulty": "Easy",
+    "floweringTime": "9-10 weeks",
+    "height": "Medium to Tall",
+    "yield": "High",
+    "seedSources": [
+      {"name":"Seedsman","url":"https://example.com/seedsman/blue-dream"},
+      {"name":"ILGM","url":"https://example.com/ilgm/blue-dream"}
+    ],
+    "description": "Blue Dream is a sativa-dominant hybrid originating in California. A cross between Blueberry and Haze, it balances full-body relaxation with gentle cerebral invigoration. With a sweet berry aroma reminiscent of its Blueberry parent, it's a popular daytime medicine for treating pain, depression, and nausea without heavy sedation."
+  },
+  {
+    "id": "northern-lights",
+    "displayName": "Northern Lights",
+    "aka": ["NL", "NorthernLights"],
+    "type": "Indica",
+    "sativa": 30,
+    "indica": 70,
+    "thcPercent": "16–21%",
+    "cbdPercent": "0.1–0.3%",
+    "effects": ["Relaxed", "Sleepy", "Happy", "Euphoric"],
+    "medicalUses": ["Insomnia", "Pain", "Stress", "Anxiety"],
+    "flavors": ["Pine", "Earthy", "Sweet", "Spicy"],
+    "bestClimate": "Temperate/cool; great indoors",
+    "difficulty": "Easy",
+    "floweringTime": "7-8 weeks",
+    "height": "Short to Medium",
+    "yield": "Medium to High",
+    "seedSources": [
+      {"name":"Royal Queen","url":"https://example.com/rqs/northern-lights"}
+    ],
+    "description": "Northern Lights is a pure indica strain, originating from Afghanistan and Thailand. It's known for its resinous buds, fast flowering, and resilience during growth. The strain has won multiple Cannabis Cup awards and is valued for its strong physical effects that relax muscles and pacify the mind without strong cerebral stimulation."
+  },
+  {
+    "id": "og-kush",
+    "displayName": "OG Kush",
+    "aka": ["OGK", "Ocean Grown Kush"],
+    "type": "Hybrid",
+    "sativa": 45,
+    "indica": 55,
+    "thcPercent": "20–26%",
+    "cbdPercent": "0.3%",
+    "effects": ["Relaxed", "Happy", "Euphoric", "Uplifted", "Hungry"],
+    "medicalUses": ["Stress", "Pain", "Depression", "Insomnia", "Appetite"],
+    "flavors": ["Earthy", "Pine", "Woody", "Citrus"],
+    "bestClimate": "Dry/warm; 8–9 wks",
+    "difficulty": "Moderate",
+    "floweringTime": "8-9 weeks",
+    "height": "Medium",
+    "yield": "Medium",
+    "seedSources": [
+      {"name":"Seedsman","url":"https://example.com/seedsman/og-kush"},
+      {"name":"ILGM","url":"https://example.com/ilgm/og-kush"}
+    ],
+    "description": "OG Kush is a legendary strain with an unknown genetic origin, though it's thought to be a cross of ChemDawg with a Lemon Thai and Pakistani Kush. It's known for its distinct aroma and strong effects that combine physical relaxation with cerebral stimulation. The strain has been foundational in creating numerous West Coast strains."
+  },
+  {
+    "id": "sour-diesel",
+    "displayName": "Sour Diesel",
+    "aka": ["Sour D", "Sour Deez"],
+    "type": "Sativa",
+    "sativa": 70,
+    "indica": 30,
+    "thcPercent": "18–23%",
+    "cbdPercent": "0.1–0.2%",
+    "effects": ["Energetic", "Happy", "Uplifted", "Focused", "Creative"],
+    "medicalUses": ["Depression", "Pain", "Stress", "Fatigue"],
+    "flavors": ["Diesel", "Citrus", "Sour", "Pungent"],
+    "bestClimate": "Sunny; 10–11 wks",
+    "difficulty": "Moderate to Difficult",
+    "floweringTime": "10-11 weeks",
+    "height": "Tall",
+    "yield": "Medium to High",
+    "seedSources": [
+      {"name":"Seedsman","url":"https://example.com/seedsman/sour-diesel"},
+      {"name":"ILGM","url":"https://example.com/ilgm/sour-diesel"}
+    ],
+    "description": "Sour Diesel is a fast-acting sativa-dominant strain with a pungent diesel aroma. It delivers energizing, dreamy cerebral effects that have pushed this strain to legendary status. Stress, pain, and depression fade away in long-lasting relief that makes it a top choice for medical users."
+  },
+  {
+    "id": "white-widow",
+    "displayName": "White Widow",
+    "aka": ["WW"],
+    "type": "Hybrid",
+    "sativa": 60,
+    "indica": 40,
+    "thcPercent": "20–25%",
+    "cbdPercent": "0.1%",
+    "effects": ["Relaxed", "Happy", "Euphoric", "Uplifted", "Creative"],
+    "medicalUses": ["Stress", "Depression", "Pain", "Fatigue"],
+    "flavors": ["Earthy", "Woody", "Sweet", "Floral"],
+    "bestClimate": "Indoors/Outdoors, Mediterranean climate",
+    "difficulty": "Easy",
+    "floweringTime": "8-9 weeks",
+    "height": "Medium",
+    "yield": "High",
+    "seedSources": [
+      {"name":"Seedsman - White Widow","url":"https://www.seedsman.com/search-results?q=White%20Widow"},
+      {"name":"Crop King - White Widow","url":"https://www.cropkingseeds.com/?s=White+Widow"}
+    ],
+    "flower": [
+      {"name":"Find on Leafly","url":"https://www.leafly.com/strains/white-widow"},
+      {"name":"Find on Weedmaps","url":"https://weedmaps.com/strains/white-widow"}
+    ],
+    "description": "White Widow is a balanced hybrid first bred in the Netherlands by Green House Seeds. A cross between a Brazilian sativa landrace and a resin-heavy South Indian indica, it's known for its white crystal resin that covers the buds, giving it its name. It's a consistent favorite due to its balanced effects and reliable performance."
+  },
+  {
+    "id": "girl-scout-cookies",
+    "displayName": "Girl Scout Cookies",
+    "aka": ["GSC", "Cookies"],
+    "type": "Hybrid",
+    "sativa": 40,
+    "indica": 60,
+    "thcPercent": "25–28%",
+    "cbdPercent": "0.2%",
+    "effects": ["Euphoric", "Happy", "Relaxed", "Uplifted", "Creative"],
+    "medicalUses": ["Stress", "Depression", "Pain", "Appetite", "Nausea"],
+    "flavors": ["Sweet", "Earthy", "Dessert", "Mint"],
+    "bestClimate": "Mediterranean, controlled humidity",
+    "difficulty": "Moderate",
+    "floweringTime": "9-10 weeks",
+    "height": "Medium",
+    "yield": "Medium",
+    "seedSources": [
+      {"name":"ILGM - GSC","url":"https://example.com/ilgm/girl-scout-cookies"},
+      {"name":"Seedsman - GSC","url":"https://example.com/seedsman/girl-scout-cookies"}
+    ],
+    "description": "Girl Scout Cookies is a popular hybrid strain created by crossing OG Kush with Durban Poison. Known for its sweet and earthy aroma, GSC launches you to euphoria's top floor where full-body relaxation meets a time-bending cerebral space. It's a potent strain with high THC content that's become a staple in the cannabis community."
+  },
+  {
+    "id": "granddaddy-purple",
+    "displayName": "Granddaddy Purple",
+    "aka": ["GDP", "Grand Daddy Purps"],
+    "type": "Indica",
+    "sativa": 20,
+    "indica": 80,
+    "thcPercent": "17–23%",
+    "cbdPercent": "0.1%",
+    "effects": ["Relaxed", "Sleepy", "Happy", "Hungry", "Euphoric"],
+    "medicalUses": ["Insomnia", "Pain", "Stress", "Appetite", "Depression"],
+    "flavors": ["Grape", "Berry", "Sweet", "Earthy"],
+    "bestClimate": "Mediterranean, consistent temperature",
+    "difficulty": "Easy to Moderate",
+    "floweringTime": "8-11 weeks",
+    "height": "Short to Medium",
+    "yield": "Medium to High",
+    "seedSources": [
+      {"name":"ILGM - GDP","url":"https://example.com/ilgm/granddaddy-purple"},
+      {"name":"Seedsman - GDP","url":"https://example.com/seedsman/granddaddy-purple"}
+    ],
+    "description": "Granddaddy Purple is a famous indica strain introduced in 2003 by Ken Estes. A cross between Purple Urkle and Big Bud, GDP inherits a complex grape and berry aroma from its Purple Urkle parent and the massive bud structure of Big Bud. Its potent effects are clearly detectable in both mind and body, delivering a fusion of cerebral euphoria and physical relaxation."
+  },
+  {
+    "id": "jack-herer",
+    "displayName": "Jack Herer",
+    "aka": ["JH", "Premium Jack"],
+    "type": "Sativa",
+    "sativa": 55,
+    "indica": 45,
+    "thcPercent": "18–24%",
+    "cbdPercent": "0.1–0.2%",
+    "effects": ["Happy", "Uplifted", "Creative", "Energetic", "Focused"],
+    "medicalUses": ["Stress", "Depression", "Fatigue", "ADHD", "PTSD"],
+    "flavors": ["Earthy", "Pine", "Woody", "Spicy"],
+    "bestClimate": "Mediterranean to temperate",
+    "difficulty": "Moderate",
+    "floweringTime": "8-10 weeks",
+    "height": "Tall",
+    "yield": "Medium to High",
+    "seedSources": [
+      {"name":"Sensi Seeds - Jack Herer","url":"https://example.com/sensi/jack-herer"},
+      {"name":"ILGM - Jack Herer","url":"https://example.com/ilgm/jack-herer"}
+    ],
+    "description": "Jack Herer is a sativa-dominant cannabis strain that has gained as much renown as its namesake, the marijuana activist and author. Combining a Haze hybrid with a Northern Lights #5 and Shiva Skunk cross, Sensi Seeds created Jack Herer hoping to capture both cerebral elevation and heavy resin production. Its rich genetic background gives rise to several different variations of Jack Herer, each phenotype bearing its own unique features and effects."
+  }
+]
