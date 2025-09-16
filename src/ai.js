@@ -1,3 +1,7 @@
+// Enhanced AI module with strain identification
+import { findStrainByName } from './data/strainDatabase';
+import { recognizeText, extractStrainNames } from './ocr';
+
 // Demo-mode AI: zero downloads, no WASM, no external models.
 export async function ensureClip() {
   return {
@@ -62,4 +66,204 @@ export function cosine(a, b) {
   const n = Math.min(a.length, b.length);
   let dot = 0; for (let i=0;i<n;i++) dot += a[i]*b[i];
   return dot;
+}
+
+// Enhanced strain identification based on visual matching
+export async function identifyStrain(imgEl, galleryMatches = []) {
+  console.log("Starting strain identification from visual matches...");
+  
+  // First use visual matching from gallery
+  const visualMatches = galleryMatches.slice(0, 3);
+  
+  // Check if any gallery matches have names that match known strains
+  const potentialStrains = visualMatches
+    .map(match => {
+      const strain = findStrainByName(match.name);
+      return strain ? { 
+        strain, 
+        score: match.score,
+        // Calculate confidence score based on match quality
+        confidence: match.score > 0.9 ? 0.95 : 
+                   match.score > 0.8 ? 0.85 : 
+                   match.score > 0.7 ? 0.75 : 
+                   match.score > 0.6 ? 0.65 : 0.5
+      } : null;
+    })
+    .filter(Boolean);
+  
+  console.log(`Found ${potentialStrains.length} potential strain matches from visual similarity`);
+  
+  // If we found matches in our database, return the top one with confidence
+  if (potentialStrains.length > 0) {
+    return {
+      strain: potentialStrains[0].strain,
+      confidence: potentialStrains[0].confidence,
+      score: potentialStrains[0].score,
+      matchType: 'visual',
+      allMatches: potentialStrains.map(p => p.strain)
+    };
+  }
+  
+  // If no matches, return null
+  return null;
+}
+
+// Enhanced function that combines visual and OCR for hybrid identification
+export async function identifyStrainHybrid(imgEl, galleryMatches = []) {
+  console.log("Starting enhanced hybrid strain identification (visual + OCR)...");
+  
+  // First try visual identification
+  const visualResult = await identifyStrain(imgEl, galleryMatches);
+  
+  // Then try OCR
+  try {
+    const canvas = imgEl instanceof HTMLCanvasElement ? imgEl : toCanvas(imgEl);
+    console.log("Running OCR on image...");
+    const recognizedText = await recognizeText(canvas);
+    console.log("OCR completed, extracting potential strain names");
+    const potentialNames = extractStrainNames(recognizedText);
+    
+    // Look for matches in the strain database
+    const textMatches = potentialNames
+      .map(name => {
+        const strain = findStrainByName(name);
+        return strain ? { 
+          name, 
+          strain,
+          // Calculate match quality based on exact vs. partial match
+          matchQuality: name.toLowerCase() === strain.displayName.toLowerCase() ? 0.95 :
+                        strain.aka?.some(alias => alias.toLowerCase() === name.toLowerCase()) ? 0.9 :
+                        0.85
+        } : null;
+      })
+      .filter(Boolean);
+    
+    console.log(`Found ${textMatches.length} potential strain matches from OCR text`);
+    
+    // If we have OCR matches, they take precedence (text on packaging is usually accurate)
+    if (textMatches.length > 0) {
+      return {
+        strain: textMatches[0].strain,
+        confidence: textMatches[0].matchQuality, // Higher confidence for text matches
+        matchType: 'text',
+        recognizedText,
+        allMatches: textMatches.map(m => m.strain)
+      };
+    }
+  } catch (err) {
+    console.error("OCR identification failed:", err);
+    // Continue with visual results if OCR fails
+  }
+  
+  // If we have a visual result, return it
+  if (visualResult) {
+    return visualResult;
+  }
+  
+  // If no matches found, try a more aggressive fuzzy matching approach
+  try {
+    const canvas = imgEl instanceof HTMLCanvasElement ? imgEl : toCanvas(imgEl);
+    // Extract dominant colors from the image
+    const colorProfile = extractColorProfile(canvas);
+    
+    // Match color profile against known strain characteristics
+    const colorMatches = matchStrainsByColor(colorProfile);
+    
+    if (colorMatches.length > 0) {
+      return {
+        strain: colorMatches[0].strain,
+        confidence: 0.6, // Lower confidence for color-based matches
+        matchType: 'color',
+        allMatches: colorMatches.map(m => m.strain)
+      };
+    }
+  } catch (err) {
+    console.error("Color matching failed:", err);
+  }
+  
+  // No matches found
+  return null;
+}
+
+// Extract color profile from image
+function extractColorProfile(canvas) {
+  const ctx = canvas.getContext('2d');
+  const { width, height } = canvas;
+  const data = ctx.getImageData(0, 0, width, height).data;
+  
+  // Calculate average RGB
+  let totalR = 0, totalG = 0, totalB = 0;
+  const pixelCount = width * height;
+  
+  for (let i = 0; i < data.length; i += 4) {
+    totalR += data[i];
+    totalG += data[i + 1];
+    totalB += data[i + 2];
+  }
+  
+  const avgR = totalR / pixelCount;
+  const avgG = totalG / pixelCount;
+  const avgB = totalB / pixelCount;
+  
+  // Calculate green-to-red ratio (higher in sativas)
+  const greenToRedRatio = avgG / (avgR || 1);
+  
+  // Calculate purple intensity (higher in some indicas)
+  const purpleIntensity = (avgR + avgB) / (2 * (avgG || 1));
+  
+  return {
+    avgR, avgG, avgB,
+    greenToRedRatio,
+    purpleIntensity
+  };
+}
+
+// Match strains by color characteristics
+function matchStrainsByColor(colorProfile) {
+  // Simplified color matching based on common strain characteristics
+  const { greenToRedRatio, purpleIntensity } = colorProfile;
+  
+  // Import all strains
+  const allStrains = require('./data/strainDatabase').getAllStrains();
+  
+  // Score strains based on color profile
+  const scoredStrains = allStrains.map(strain => {
+    let score = 0;
+    
+    // Sativas tend to be more green
+    if (strain.type === 'Sativa' && greenToRedRatio > 1.2) {
+      score += 0.3;
+    }
+    
+    // Indicas often have purple hues
+    if (strain.type === 'Indica' && purpleIntensity > 1.1) {
+      score += 0.3;
+    }
+    
+    // Hybrids fall in between
+    if (strain.type === 'Hybrid') {
+      score += 0.2;
+    }
+    
+    // Specific strain color matching
+    if (strain.displayName.toLowerCase().includes('purple') && purpleIntensity > 1.1) {
+      score += 0.3;
+    }
+    
+    if (strain.displayName.toLowerCase().includes('green') && greenToRedRatio > 1.2) {
+      score += 0.3;
+    }
+    
+    if (strain.displayName.toLowerCase().includes('blue') && colorProfile.avgB > colorProfile.avgR) {
+      score += 0.3;
+    }
+    
+    return { strain, score };
+  });
+  
+  // Sort by score and return top matches
+  return scoredStrains
+    .filter(item => item.score > 0.2)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
 }
