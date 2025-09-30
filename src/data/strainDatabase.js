@@ -1,104 +1,14 @@
 // Comprehensive strain database for StrainSpotter
-import affiliateData from '../../public/affiliates/strains.json';
-import affiliateLinks from '../../public/affiliates/affiliates.json';
-
-// Import the existing strain data
-// Note: In a real implementation, we'd import from the actual file paths
-// but for this demo we'll create a merged database directly
-const strainData = [
-  {
-    "id": "blue-dream",
-    "displayName": "Blue Dream",
-    "aka": ["BlueDream", "Blue-Dream"],
-    "thcPercent": "18–24%",
-    "bestClimate": "Warm Mediterranean, low humidity",
-    "seedSources": [
-      {"name":"Seedsman","url":"https://example.com/seedsman/blue-dream"},
-      {"name":"ILGM","url":"https://example.com/ilgm/blue-dream"}
-    ]
-  },
-  {
-    "id": "northern-lights",
-    "displayName": "Northern Lights",
-    "aka": ["NL", "NorthernLights"],
-    "thcPercent": "16–21%",
-    "bestClimate": "Temperate/cool; great indoors",
-    "seedSources": [
-      {"name":"Royal Queen","url":"https://example.com/rqs/northern-lights"}
-    ]
-  },
-  {
-    "id": "og-kush",
-    "displayName": "OG Kush",
-    "aka": ["OGK", "Ocean Grown Kush"],
-    "thcPercent": "20–26%",
-    "bestClimate": "Dry/warm; 8–9 wks",
-    "seedSources": [
-      {"name":"Seedsman","url":"https://example.com/seedsman/og-kush"},
-      {"name":"ILGM","url":"https://example.com/ilgm/og-kush"}
-    ]
-  },
-  {
-    "id": "sour-diesel",
-    "displayName": "Sour Diesel",
-    "aka": ["Sour D", "Sour Deez"],
-    "thcPercent": "18–23%",
-    "bestClimate": "Sunny; 10–11 wks",
-    "seedSources": [
-      {"name":"Seedsman","url":"https://example.com/seedsman/sour-diesel"},
-      {"name":"ILGM","url":"https://example.com/ilgm/sour-diesel"}
-    ]
-  },
-  {
-    "id": "girl-scout-cookies",
-    "displayName": "Girl Scout Cookies",
-    "aka": ["GSC", "Cookies"],
-    "thcPercent": "19–28%",
-    "bestClimate": "Mediterranean; 9–10 wks",
-    "seedSources": [
-      {"name":"Seedsman","url":"https://example.com/seedsman/gsc"},
-      {"name":"ILGM","url":"https://example.com/ilgm/gsc"}
-    ]
-  }
-];
-
-// Merge with expanded data
-let expandedStrains = [];
-try {
-  // In a real app, we'd import this properly
-  // For this demo, we'll use the existing data
-  expandedStrains = strainData.map(strain => {
-    // Add additional fields that would be in the expanded data
-    return {
-      ...strain,
-      type: strain.id === "northern-lights" ? "Indica" : 
-            strain.id === "sour-diesel" ? "Sativa" : "Hybrid",
-      sativa: strain.id === "northern-lights" ? 30 : 
-              strain.id === "sour-diesel" ? 90 : 60,
-      indica: strain.id === "northern-lights" ? 70 : 
-              strain.id === "sour-diesel" ? 10 : 40,
-      description: `${strain.displayName} is a popular cannabis strain known for its unique effects and flavor profile.`,
-      effects: ["Relaxed", "Happy", "Euphoric"],
-      medicalUses: ["Stress", "Pain", "Depression"],
-      flavors: ["Earthy", "Sweet"],
-      difficulty: "Medium",
-      floweringTime: "8-10 weeks",
-      height: "Medium",
-      yield: "Medium to High"
-    };
-  });
-} catch (err) {
-  console.error("Error loading expanded strain data:", err);
-}
+import expandedStrainsData from './expanded-strains-full.json';
 
 // Get all strains from the database
 export function getAllStrains() {
-  return expandedStrains;
+  return expandedStrainsData;
 }
 
 // Find a strain by ID
 export function findStrainById(id) {
-  return expandedStrains.find(strain => strain.id === id) || null;
+  return expandedStrainsData.find(strain => strain.id === id) || null;
 }
 
 // Find a strain by name with optional fuzzy matching
@@ -108,13 +18,13 @@ export function findStrainByName(name, fuzzyMatch = false) {
   const normalizedName = name.toLowerCase().trim();
   
   // First try exact match on display name
-  const exactMatch = expandedStrains.find(
+  const exactMatch = expandedStrainsData.find(
     strain => strain.displayName.toLowerCase() === normalizedName
   );
   if (exactMatch) return exactMatch;
   
   // Then try exact match on aliases
-  const aliasMatch = expandedStrains.find(
+  const aliasMatch = expandedStrainsData.find(
     strain => strain.aka && strain.aka.some(alias => alias.toLowerCase() === normalizedName)
   );
   if (aliasMatch) return aliasMatch;
@@ -122,14 +32,14 @@ export function findStrainByName(name, fuzzyMatch = false) {
   // If fuzzy matching is enabled, try partial matches
   if (fuzzyMatch) {
     // Try partial match on display name
-    const partialNameMatch = expandedStrains.find(
+    const partialNameMatch = expandedStrainsData.find(
       strain => strain.displayName.toLowerCase().includes(normalizedName) ||
                 normalizedName.includes(strain.displayName.toLowerCase())
     );
     if (partialNameMatch) return partialNameMatch;
     
     // Try partial match on aliases
-    const partialAliasMatch = expandedStrains.find(
+    const partialAliasMatch = expandedStrainsData.find(
       strain => strain.aka && strain.aka.some(
         alias => alias.toLowerCase().includes(normalizedName) ||
                 normalizedName.includes(alias.toLowerCase())
@@ -143,7 +53,7 @@ export function findStrainByName(name, fuzzyMatch = false) {
       for (const word of words) {
         if (word.length < 3) continue; // Skip short words
         
-        const wordMatch = expandedStrains.find(
+        const wordMatch = expandedStrainsData.find(
           strain => strain.displayName.toLowerCase().includes(word)
         );
         if (wordMatch) return wordMatch;
@@ -154,8 +64,98 @@ export function findStrainByName(name, fuzzyMatch = false) {
   return null;
 }
 
+// Search strains by type
+export function findStrainsByType(type) {
+  const normalizedType = type.toLowerCase();
+  return expandedStrainsData.filter(
+    strain => strain.type.toLowerCase() === normalizedType
+  );
+}
+
+// Search strains by effect
+export function findStrainsByEffect(effect) {
+  const normalizedEffect = effect.toLowerCase();
+  return expandedStrainsData.filter(
+    strain => strain.effects && strain.effects.some(
+      e => e.toLowerCase().includes(normalizedEffect)
+    )
+  );
+}
+
+// Search strains by flavor
+export function findStrainsByFlavor(flavor) {
+  const normalizedFlavor = flavor.toLowerCase();
+  return expandedStrainsData.filter(
+    strain => strain.flavors && strain.flavors.some(
+      f => f.toLowerCase().includes(normalizedFlavor)
+    )
+  );
+}
+
 // Get affiliate links for a strain
 export function getAffiliateLinks(strainId) {
   const strain = findStrainById(strainId);
   return strain ? strain.seedSources || [] : [];
 }
+
+// Get random strains for featured section
+export function getRandomStrains(count = 5) {
+  const shuffled = [...expandedStrainsData].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+}
+
+// Get top-rated strains
+export function getTopRatedStrains(count = 10) {
+  // Since we don't have ratings in the new data, return random popular strains
+  return getRandomStrains(count);
+}
+
+// Search strains with multiple criteria
+export function searchStrains(query) {
+  if (!query || query.trim() === '') {
+    return expandedStrainsData;
+  }
+  
+  const normalizedQuery = query.toLowerCase().trim();
+  
+  return expandedStrainsData.filter(strain => {
+    // Search in name
+    if (strain.displayName.toLowerCase().includes(normalizedQuery)) return true;
+    
+    // Search in aliases
+    if (strain.aka && strain.aka.some(alias => 
+      alias.toLowerCase().includes(normalizedQuery)
+    )) return true;
+    
+    // Search in type
+    if (strain.type.toLowerCase().includes(normalizedQuery)) return true;
+    
+    // Search in effects
+    if (strain.effects && strain.effects.some(effect => 
+      effect.toLowerCase().includes(normalizedQuery)
+    )) return true;
+    
+    // Search in flavors
+    if (strain.flavors && strain.flavors.some(flavor => 
+      flavor.toLowerCase().includes(normalizedQuery)
+    )) return true;
+    
+    // Search in description
+    if (strain.description && strain.description.toLowerCase().includes(normalizedQuery)) return true;
+    
+    return false;
+  });
+}
+
+export default {
+  getAllStrains,
+  findStrainById,
+  findStrainByName,
+  findStrainsByType,
+  findStrainsByEffect,
+  findStrainsByFlavor,
+  getAffiliateLinks,
+  getRandomStrains,
+  getTopRatedStrains,
+  searchStrains
+};

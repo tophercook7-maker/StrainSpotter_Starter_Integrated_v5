@@ -1,0 +1,440 @@
+/* ========================================
+   StrainSpotter - Modern Cannabis App Theme
+   ======================================== */
+
+/* === ROOT VARIABLES === */
+:root {
+  --primary-green: #2ecc71;
+  --dark-green: #27ae60;
+  --light-green: #58d68d;
+  --bg-dark: #1a1a1a;
+  --bg-card: rgba(30, 30, 30, 0.95);
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --border-color: rgba(46, 204, 113, 0.3);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* === GLOBAL RESET === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: var(--text-primary);
+  background: var(--bg-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* === HERO SECTION === */
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)),
+              url('bg.png') center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.hero-icon {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 4px 10px rgba(46, 204, 113, 0.5));
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+  margin-bottom: 10px;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* === APP CONTAINER === */
+#root, ion-app {
+  background: var(--bg-dark) !important;
+  --background: var(--bg-dark) !important;
+}
+
+ion-content {
+  --background: var(--bg-dark) !important;
+  background: var(--bg-dark) !important;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: var(--bg-dark);
+}
+
+/* === CARDS === */
+.card, ion-card, [data-card] {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 16px !important;
+  padding: 20px !important;
+  margin-bottom: 20px !important;
+  box-shadow: var(--shadow) !important;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover, ion-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(46, 204, 113, 0.3) !important;
+}
+
+/* === BUTTONS === */
+button, .btn, ion-button {
+  background: var(--primary-green) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 12px 24px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s !important;
+  box-shadow: 0 2px 10px rgba(46, 204, 113, 0.3) !important;
+}
+
+button:hover, .btn:hover, ion-button:hover {
+  background: var(--dark-green) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(46, 204, 113, 0.5) !important;
+}
+
+button:active, .btn:active, ion-button:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* === INPUTS === */
+input, textarea, select, ion-input, ion-textarea {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  padding: 12px 16px !important;
+  font-size: 16px !important;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary-green) !important;
+  box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+/* === TABS === */
+.tabs, ion-segment, ion-tab-bar {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  padding: 8px !important;
+  margin-bottom: 20px !important;
+}
+
+.tab, ion-segment-button {
+  color: var(--text-secondary) !important;
+  border-radius: 8px !important;
+  padding: 10px 20px !important;
+  transition: all 0.3s !important;
+}
+
+.tab.active, ion-segment-button.segment-button-checked {
+  background: var(--primary-green) !important;
+  color: white !important;
+}
+
+/* === STRAIN CARDS === */
+.strain-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: all 0.3s;
+}
+
+.strain-card:hover {
+  border-color: var(--primary-green);
+  box-shadow: 0 6px 25px rgba(46, 204, 113, 0.3);
+  transform: translateY(-2px);
+}
+
+.strain-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.strain-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-green);
+}
+
+.strain-type {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.strain-type.indica {
+  background: rgba(138, 43, 226, 0.2);
+  color: #ba55d3;
+  border: 1px solid rgba(138, 43, 226, 0.4);
+}
+
+.strain-type.sativa {
+  background: rgba(255, 165, 0, 0.2);
+  color: #ffa500;
+  border: 1px solid rgba(255, 165, 0, 0.4);
+}
+
+.strain-type.hybrid {
+  background: rgba(46, 204, 113, 0.2);
+  color: var(--primary-green);
+  border: 1px solid var(--border-color);
+}
+
+.strain-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin: 15px 0;
+}
+
+.info-item {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+}
+
+.info-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-green);
+}
+
+/* === EFFECTS & FLAVORS === */
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 15px 0;
+}
+
+.tag {
+  background: rgba(46, 204, 113, 0.15);
+  color: var(--light-green);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+/* === PROGRESS BAR (Indica/Sativa Ratio) === */
+.ratio-bar {
+  width: 100%;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  overflow: hidden;
+  margin: 15px 0;
+  position: relative;
+}
+
+.ratio-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ba55d3, var(--primary-green));
+  transition: width 0.5s ease;
+}
+
+.ratio-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* === AGE GATE === */
+.age-gate {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.age-gate-content {
+  background: var(--bg-card);
+  border: 2px solid var(--primary-green);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(46, 204, 113, 0.3);
+}
+
+.age-gate-icon {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 20px;
+}
+
+.age-gate h2 {
+  font-size: 2rem;
+  color: var(--primary-green);
+  margin-bottom: 15px;
+}
+
+.age-gate p {
+  color: var(--text-secondary);
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.age-gate-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* === CAMERA SECTION === */
+.camera-section {
+  background: var(--bg-card);
+  border: 2px dashed var(--border-color);
+  border-radius: 16px;
+  padding: 40px;
+  text-align: center;
+  margin: 20px 0;
+  transition: all 0.3s;
+}
+
+.camera-section:hover {
+  border-color: var(--primary-green);
+  background: rgba(46, 204, 113, 0.05);
+}
+
+.camera-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  color: var(--primary-green);
+}
+
+/* === LOADING SPINNER === */
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top: 4px solid var(--primary-green);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-icon {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .strain-info {
+    grid-template-columns: 1fr;
+  }
+  
+  .age-gate-content {
+    margin: 20px;
+    padding: 30px 20px;
+  }
+}
+
+/* === UTILITY CLASSES === */
+.text-center { text-align: center; }
+.text-green { color: var(--primary-green); }
+.mt-20 { margin-top: 20px; }
+.mb-20 { margin-bottom: 20px; }
+.hidden { display: none; }
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-green);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-green);
+}
