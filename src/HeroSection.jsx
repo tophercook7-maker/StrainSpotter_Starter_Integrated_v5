@@ -7,12 +7,12 @@ function HeroSection() {
       <div className="hero-content">
         <img 
           src="/cannabis-leaf-icon.svg" 
-          alt="StrainSpotter Icon" 
-          className="hero-icon"
+          alt="StrainSpotter - Cannabis Strain Identifier" 
+          className="hero-icon-large"
         />
         <h1 className="hero-title">StrainSpotter</h1>
         <p className="hero-subtitle">
-          🌿 AI-Powered Cannabis Strain Identification & Growing Guide
+          AI-Powered Cannabis Strain Identification & Growing Guide
         </p>
         <div className="hero-stats">
           <div className="stat-item">
@@ -24,8 +24,8 @@ function HeroSection() {
             <div className="stat-label">Powered</div>
           </div>
           <div className="stat-item">
-            <div className="stat-number">100%</div>
-            <div className="stat-label">Free</div>
+            <div className="stat-number">Expert</div>
+            <div className="stat-label">Guides</div>
           </div>
         </div>
       </div>

@@ -41,17 +41,18 @@ body {
 .hero-section {
   position: relative;
   width: 100%;
-  min-height: 500px;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(27, 94, 32, 0.6)),
-              url('bg.png') center/cover no-repeat;
+  min-height: 600px;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(22, 163, 74, 0.4)),
+              url('cannabis-field-bg.jpg') center/cover no-repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 60px 20px;
+  padding: 80px 20px;
   margin-bottom: 40px;
   overflow: hidden;
+  background-attachment: fixed;
 }
 
 .hero-overlay {
@@ -70,17 +71,17 @@ body {
   max-width: 900px;
 }
 
-.hero-icon {
-  width: 140px;
-  height: 140px;
+.hero-icon-large {
+  width: 200px;
+  height: 200px;
   margin-bottom: 30px;
-  filter: drop-shadow(0 8px 20px rgba(46, 204, 113, 0.6));
+  filter: drop-shadow(0 10px 30px rgba(34, 197, 94, 0.8));
   animation: float 3s ease-in-out infinite;
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(2deg); }
 }
 
 .hero-title {
@@ -485,9 +486,9 @@ input::placeholder, textarea::placeholder {
     font-size: 1.1rem;
   }
   
-  .hero-icon {
-    width: 100px;
-    height: 100px;
+  .hero-icon-large {
+    width: 150px;
+    height: 150px;
   }
   
   .hero-stats {

@@ -1,48 +1,121 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-  <!-- Realistic 7-Leaf Cannabis Icon -->
+  <!-- Realistic 5-Leaf Cannabis Icon -->
   <defs>
-    <linearGradient id="leafGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#3edc81;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#27ae60;stop-opacity:1" />
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4ade80;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#22c55e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
     </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+    </filter>
   </defs>
   
-  <g id="cannabis-leaf">
+  <g filter="url(#shadow)">
     <!-- Center stem -->
-    <path d="M100 190 L100 95" stroke="#27ae60" stroke-width="3" stroke-linecap="round"/>
+    <path d="M100 195 L100 90" 
+          stroke="#15803d" 
+          stroke-width="4" 
+          stroke-linecap="round"
+          fill="none"/>
     
-    <!-- Center leaf (largest, most prominent) -->
-    <path d="M100 95 Q98 45, 100 15 Q102 45, 100 95 Z" 
-          fill="url(#leafGradient)" stroke="#1e8449" stroke-width="1.5"/>
+    <!-- Center leaf (largest) -->
+    <path d="M100 90 
+             C98 75, 97 60, 97 45
+             C97 35, 98 25, 100 10
+             C102 25, 103 35, 103 45
+             C103 60, 102 75, 100 90 Z" 
+          fill="url(#leafGrad)" 
+          stroke="#15803d" 
+          stroke-width="1.5"/>
     
-    <!-- Left side leaves (3 leaves) -->
-    <!-- Far left leaf -->
-    <path d="M100 95 Q85 85, 70 80 Q60 75, 45 72 Q55 78, 70 85 Q85 90, 100 95 Z" 
-          fill="url(#leafGradient)" stroke="#1e8449" stroke-width="1.5"/>
+    <!-- Add serrations to center leaf -->
+    <path d="M97 45 L95 48 L97 52 L95 56 L97 60 L95 64 L97 68 L95 72 L97 76 L95 80 L97 84 L98 88
+             M103 45 L105 48 L103 52 L105 56 L103 60 L105 64 L103 68 L105 72 L103 76 L105 80 L103 84 L102 88" 
+          fill="none" 
+          stroke="#15803d" 
+          stroke-width="1" 
+          opacity="0.6"/>
     
-    <!-- Mid-left leaf -->
-    <path d="M100 95 Q92 75, 85 65 Q78 55, 68 48 Q75 58, 85 68 Q92 78, 100 95 Z" 
-          fill="url(#leafGradient)" stroke="#1e8449" stroke-width="1.5"/>
+    <!-- Left inner leaf -->
+    <path d="M100 90
+             C92 82, 85 75, 80 68
+             C75 62, 72 55, 70 48
+             C72 55, 76 62, 82 68
+             C88 75, 94 82, 100 90 Z"
+          fill="url(#leafGrad)"
+          stroke="#15803d"
+          stroke-width="1.5"/>
     
-    <!-- Near-left leaf -->
-    <path d="M100 95 Q96 70, 94 55 Q92 40, 88 28 Q92 42, 95 58 Q97 73, 100 95 Z" 
-          fill="url(#leafGradient)" stroke="#1e8449" stroke-width="1.5"/>
+    <!-- Add serrations to left inner -->
+    <path d="M80 68 L78 70 L80 73 L78 76 L80 79 L78 82 L80 85 L82 88"
+          fill="none"
+          stroke="#15803d"
+          stroke-width="0.8"
+          opacity="0.6"/>
     
-    <!-- Right side leaves (3 leaves) -->
-    <!-- Far right leaf -->
-    <path d="M100 95 Q115 85, 130 80 Q140 75, 155 72 Q145 78, 130 85 Q115 90, 100 95 Z" 
-          fill="url(#leafGradient)" stroke="#1e8449" stroke-width="1.5"/>
+    <!-- Right inner leaf -->
+    <path d="M100 90
+             C108 82, 115 75, 120 68
+             C125 62, 128 55, 130 48
+             C128 55, 124 62, 118 68
+             C112 75, 106 82, 100 90 Z"
+          fill="url(#leafGrad)"
+          stroke="#15803d"
+          stroke-width="1.5"/>
     
-    <!-- Mid-right leaf -->
-    <path d="M100 95 Q108 75, 115 65 Q122 55, 132 48 Q125 58, 115 68 Q108 78, 100 95 Z" 
-          fill="url(#leafGradient)" stroke="#1e8449" stroke-width="1.5"/>
+    <!-- Add serrations to right inner -->
+    <path d="M120 68 L122 70 L120 73 L122 76 L120 79 L122 82 L120 85 L118 88"
+          fill="none"
+          stroke="#15803d"
+          stroke-width="0.8"
+          opacity="0.6"/>
     
-    <!-- Near-right leaf -->
-    <path d="M100 95 Q104 70, 106 55 Q108 40, 112 28 Q108 42, 105 58 Q103 73, 100 95 Z" 
-          fill="url(#leafGradient)" stroke="#1e8449" stroke-width="1.5"/>
+    <!-- Left outer leaf -->
+    <path d="M100 90
+             C88 85, 76 80, 65 75
+             C55 70, 48 65, 40 58
+             C48 65, 58 70, 68 75
+             C78 80, 88 85, 100 90 Z"
+          fill="url(#leafGrad)"
+          stroke="#15803d"
+          stroke-width="1.5"/>
     
-    <!-- Add serrated edges detail -->
-    <path d="M100 15 L98 20 L100 25 L98 30 L100 35 L98 40 L100 45 L98 50 L100 55 L98 60 L100 65 L98 70 L100 75 L98 80 L100 85 L98 90 L100 95" 
-          fill="none" stroke="#1e8449" stroke-width="0.5" opacity="0.6"/>
+    <!-- Add serrations to left outer -->
+    <path d="M65 75 L63 77 L65 80 L63 83 L65 86 L67 89"
+          fill="none"
+          stroke="#15803d"
+          stroke-width="0.8"
+          opacity="0.6"/>
+    
+    <!-- Right outer leaf -->
+    <path d="M100 90
+             C112 85, 124 80, 135 75
+             C145 70, 152 65, 160 58
+             C152 65, 142 70, 132 75
+             C122 80, 112 85, 100 90 Z"
+          fill="url(#leafGrad)"
+          stroke="#15803d"
+          stroke-width="1.5"/>
+    
+    <!-- Add serrations to right outer -->
+    <path d="M135 75 L137 77 L135 80 L137 83 L135 86 L133 89"
+          fill="none"
+          stroke="#15803d"
+          stroke-width="0.8"
+          opacity="0.6"/>
+    
+    <!-- Add veins to center leaf -->
+    <path d="M100 10 L100 90" 
+          stroke="#15803d" 
+          stroke-width="1" 
+          opacity="0.4"/>
+    <path d="M100 30 L95 40 M100 30 L105 40
+             M100 50 L94 60 M100 50 L106 60
+             M100 70 L93 80 M100 70 L107 80"
+          stroke="#15803d"
+          stroke-width="0.8"
+          opacity="0.3"
+          fill="none"/>
   </g>
 </svg>
