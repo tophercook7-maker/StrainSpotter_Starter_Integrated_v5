@@ -189,17 +189,6 @@ export default function StrainSpotterApp() {
   // Main app view
   return (
     <div>
-      {/* TESTING - THIS SHOULD BE VISIBLE */}
-      <div style={{
-        background: 'red',
-        color: 'white',
-        padding: '20px',
-        textAlign: 'center',
-        fontSize: '24px',
-        fontWeight: 'bold'
-      }}>
-        🔴 NEW VERSION LOADED - IF YOU SEE THIS RED BANNER, THE NEW CODE IS WORKING! 🔴
-      </div>
       <HeroSection />
       
       <div className="app-container">
